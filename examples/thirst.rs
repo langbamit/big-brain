@@ -1,4 +1,4 @@
-use bevy::prelude::*;
+use bevy::{app::ScheduleRunnerSettings, prelude::*, utils::Duration};
 use big_brain::prelude::*;
 
 // First, we define a "Thirst" component and associated system. This is NOT
@@ -85,7 +85,7 @@ fn drink_action_system(
         if let Ok(mut thirst) = thirsts.get_mut(*actor) {
             match *state {
                 ActionState::Requested => {
-                    thirst.thirst = 10.0;
+                    thirst.thirst = 70.0;
                     println!("drank some water");
                     *state = ActionState::Success;
                 }
@@ -163,7 +163,10 @@ pub fn init_entities(mut cmd: Commands) {
 fn main() {
     // Once all that's done, we just add our systems and off we go!
     App::build()
-        .add_plugins(DefaultPlugins)
+        .insert_resource(ScheduleRunnerSettings::run_loop(Duration::from_secs_f64(
+            1.0,
+        )))
+        .add_plugins(MinimalPlugins)
         .add_plugin(BigBrainPlugin)
         .add_startup_system(init_entities.system())
         .add_system(thirst_system.system())
